@@ -24,7 +24,6 @@ import subprocess
 import tempfile
 import warnings
 
-import h5py
 import hsluv
 import numpy as np
 import matplotlib.pyplot as plt
@@ -51,7 +50,6 @@ plt.rcParams.update({
     'mathtext.fontset': 'custom',
     'mathtext.default': 'it',
     'mathtext.rm': 'sans',
-    # 'mathtext.it': 'sans:italic:medium',
     'mathtext.cal': 'sans',
     'font.size': fontnormal,
     'legend.fontsize': fontnormal,

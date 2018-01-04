@@ -41,8 +41,8 @@ from pathlib import Path
 import pickle
 
 from hic import flow
+import joblib
 import numpy as np
-from sklearn.externals import joblib
 
 from . import workdir, cachedir, systems, lazydict, expt
 

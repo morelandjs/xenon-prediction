@@ -1,5 +1,5 @@
 hic
 hsluv
+joblib
 numpy
 PyYAML
-scikit-learn >= 0.18

@@ -10,14 +10,14 @@ First make sure the prerequisite Python libraries are installed,
 ```
 pip install -r requirements.txt
 ```
-Then run `python3 -m src.plots` from the git repo directory to generate the
+Then run `python3 -m src.plots` from the git repo directory to regenerate the
 prediction figures.
 
 ## Figure captions
 
 ### Xenon cross section
 
-The Trento initial condition model takes as input the inelastic nucleon-nucleon cross section and an overall entropy normalization factor which should be tuned at each beam energy. To make predictions for Xe+Xe collisions at 5.44 TeV, we need to extrapolate their values from previous measurements. 
+The Trento initial condition model takes as input the inelastic nucleon-nucleon cross section and an overall entropy normalization factor which should be tuned at each collision beam energy. To make predictions for Xe+Xe collisions at 5.44 TeV, we need to extrapolate their values from previous measurements. 
 
 The inelastic nucleon-nucleon cross section is measured experimentally. We use measurements made at 0.2, 2.76, 5.02 and 7 TeV listed with references on the [Trento documentation page](http://qcd.phy.duke.edu/trento/usage.html). The cross section values are then fit with a second order polynomial in log(√s).
 
@@ -25,11 +25,11 @@ We find an inelastic nucleon-nucleon cross section at 5.44 TeV of 7.07 fm<sup>2<
 
 ### Entropy normalization
 
-In addition to the increasing cross section, we must also extrapolate the increase in the normalization factor from 5.02 to 5.44 TeV. 
+In addition to the increasing cross section, we must extrapolate the increase in the normalization factor from 5.02 to 5.44 TeV. 
 
 We start by running three sets of Trento initial condition events at 2.76, 5.02 and 5.44 TeV _with the correct inelastic nucleon-nucleon cross section at each beam energy_. We then then use the empirically verified scaling law dNch/dη ≈ norm * dS/dη to find the requisite entropy normalization at each beam energy to reproduce observed particle production at 2.76 and 5.02 TeV.
 
-The two normalization factors norm(2.76 TeV) and norm(5.02 TeV) are then fit with a power law to predict norm(5.44 TeV). We then convert this scaling normalization into a physical normalization by measuring the ratio norm(5.44 TeV) / norm(5.02 TeV) and using it to scale up our best fit Pb+Pb 5.02 TeV normalization from the combined Bayesian analysis.
+The two normalization factors, norm(2.76 TeV) and norm(5.02 TeV), are then fit with a power law to predict norm(5.44 TeV). We then convert this scaling normalization into a physical normalization by measuring the ratio norm(5.44 TeV) / norm(5.02 TeV) and using it to scale up our best fit Pb+Pb 5.02 TeV normalization from the combined Bayesian analysis.
 
 This yields a modest ~2% increase in the entropy normalization from 5.02 to 5.44 TeV.
 
@@ -43,9 +43,9 @@ Solid lines show model calculations for 5.02 TeV Pb+Pb collisions and dashed lin
 
 ## Physics model
 
-Minimum bias events are generated using the [Trento](https://arxiv.org/abs/1412.4708) initial condition model with a pre-equilibrium free streaming stage. The subsequent transport dynamics are then simulated using the [iEBE-VISHNU](https://arxiv.org/abs/1409.8164) hydro + micro model with shear and bulk viscous corrections.
+Minimum bias events are generated using the [TRENTO](https://arxiv.org/abs/1412.4708) initial condition model with a pre-equilibrium free streaming stage. The subsequent transport dynamics are then simulated using the [iEBE-VISHNU](https://arxiv.org/abs/1409.8164) hydro + micro model with shear and bulk viscous corrections.
 
-It's worth noting that this version of the physics model is updated compared to the version shown at Quark Matter 2017 and in previously published work. Namely, significant changes have been made to the particle sampler. These changes have not yet been documented, so please contact Jonah Bernhard for additional information.
+It's worth noting that this version of the physics model is updated compared to the versions shown at Quark Matter 2017 and in previously published work. Namely, significant changes have been made to the particle sampler. These changes have not yet been documented, so please contact Jonah Bernhard for additional information.
 
 ## Bayesian parameter estimation
 
@@ -53,9 +53,9 @@ The initial condition and hydro model parameters are chosen using maximum aposte
 
 We use the same parameter values for both 5.44 TeV Xe+Xe collisions and 5.02 TeV Pb+Pb collisions, _except_ for the initial entropy normalization and inelastic nucleon-nucleon cross section which depend strongly on beam energy as discussed previously.
 
-The MAP parameter values are:
+The shared MAP parameter values are:
 
-| Parameter | Description |  Range |
+| Parameter | Description | Value |
 | --------- | ----------- | ------ |
 | p         | Entropy deposition parameter | 0.0 |
 | k fluct   | Multiplicity fluct. shape | 1.186 |

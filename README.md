@@ -17,9 +17,9 @@ prediction figures.
 
 ### Xenon cross section
 
-The T<sub>R</sub>ENTo initial condition model takes as input the inelastic nucleon-nucleon cross section and an overall entropy normalization factor which should be tuned at each collision beam energy. To make predictions for Xe+Xe collisions at 5.44 TeV, we need to extrapolate their values from previous measurements. 
+The trento initial condition model takes as input the inelastic nucleon-nucleon cross section and an overall entropy normalization factor which should be tuned at each collision beam energy. To make predictions for Xe+Xe collisions at 5.44 TeV, we need to extrapolate their values from previous measurements. 
 
-The inelastic nucleon-nucleon cross section is measured experimentally. We use measurements made at 0.2, 2.76, 5.02 and 7 TeV listed with references on the [T<sub>R</sub>ENTo documentation page](http://qcd.phy.duke.edu/trento/usage.html). The cross section values are then fit with a second order polynomial in log(√s).
+The inelastic nucleon-nucleon cross section is measured experimentally. We use measurements made at 0.2, 2.76, 5.02 and 7 TeV listed with references on the [trento documentation page](http://qcd.phy.duke.edu/trento/usage.html). The cross section values are then fit with a second order polynomial in log(√s).
 
 We find an inelastic nucleon-nucleon cross section at 5.44 TeV of 7.07 fm<sup>2</sup>.
 
@@ -27,7 +27,7 @@ We find an inelastic nucleon-nucleon cross section at 5.44 TeV of 7.07 fm<sup>2<
 
 In addition to the increasing cross section, we must extrapolate the increase in the normalization factor from 5.02 to 5.44 TeV. 
 
-We start by running three sets of T<sub>R</sub>ENTo initial condition events at 2.76, 5.02 and 5.44 TeV _with the correct inelastic nucleon-nucleon cross section at each beam energy_. We then then use the empirically verified scaling law dNch/dη ≈ norm * dS/dη to find the requisite entropy normalization at each beam energy to reproduce observed particle production at 2.76 and 5.02 TeV.
+We start by running three sets of trento initial condition events at 2.76, 5.02 and 5.44 TeV _with the correct inelastic nucleon-nucleon cross section at each beam energy_. We then then use the empirically verified scaling law dNch/dη ≈ norm * dS/dη to find the requisite entropy normalization at each beam energy to reproduce observed particle production at 2.76 and 5.02 TeV.
 
 The two normalization factors, norm(2.76 TeV) and norm(5.02 TeV), are then fit with a power law to predict norm(5.44 TeV). We then convert this scaling normalization into a physical normalization by measuring the ratio norm(5.44 TeV) / norm(5.02 TeV) and using it to scale up our best fit Pb+Pb 5.02 TeV normalization from the combined Bayesian analysis.
 
@@ -43,7 +43,7 @@ Solid lines show model calculations for 5.02 TeV Pb+Pb collisions and dashed lin
 
 ## Physics model
 
-Minimum bias events are generated using the [T<sub>R</sub>ENTo](https://arxiv.org/abs/1412.4708) initial condition model with a pre-equilibrium free streaming stage. The subsequent transport dynamics are then simulated using the [iEBE-VISHNU](https://arxiv.org/abs/1409.8164) hydro + micro model with shear and bulk viscous corrections.
+Minimum bias events are generated using the [trento](https://arxiv.org/abs/1412.4708) initial condition model with a pre-equilibrium free streaming stage. The subsequent transport dynamics are then simulated using the [iEBE-VISHNU](https://arxiv.org/abs/1409.8164) hydro + micro model with shear and bulk viscous corrections.
 
 It's worth noting that this version of the physics model is updated compared to the versions shown at Quark Matter 2017 and in previously published work. Namely, significant changes have been made to the particle sampler. These changes have not yet been documented, so please contact Jonah Bernhard for additional information.
 

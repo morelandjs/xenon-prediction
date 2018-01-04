@@ -1,6 +1,6 @@
 # LHC Xe+Xe 5.44 TeV predictions
 
-This repository contains predictions for Xenon-Xenon collisions at 5.44 TeV.
+This repository contains predictions for Xenon-Xenon collisions at √s = 5.44 TeV.
 
 ## Regenerating figures
 

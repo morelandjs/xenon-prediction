@@ -1,4 +1,5 @@
 hic
+hsluv
 numpy
 PyYAML
 scikit-learn >= 0.18

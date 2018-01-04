@@ -33,7 +33,7 @@ The two normalization factors, norm(2.76 TeV) and norm(5.02 TeV), are then fit w
 
 This yields a modest ~2% increase in the entropy normalization from 5.02 to 5.44 TeV.
 
-### Observables MAP 
+### Observables from maximum posterior density
 
 We show self consistent calculations for Pb+Pb collisions at 5.02 TeV and Xe+Xe collisions at 5.44 TeV using model parameters which have been calibrated to fit available data for Pb+Pb collisions at 2.76 and 5.02 TeV. Note that most of the 5.02 Pb+Pb data is missing, and hence our model calculations represent predictions for those observables as well. For observables where the 5.02 and 5.44 TeV measurements are missing, we use the same centrality bins as 2.76 TeV measurements.
 

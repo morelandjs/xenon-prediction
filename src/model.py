@@ -41,8 +41,8 @@ from pathlib import Path
 import pickle
 
 from hic import flow
+import joblib
 import numpy as np
-from sklearn.externals import joblib
 
 from . import workdir, cachedir, systems, lazydict, expt
 
@@ -271,8 +271,8 @@ def _data(system, dataset='main'):
 
     data = expt.data[system]
 
-    # some data are not yet available for PbPb5020, and not data is
-    # available yet for XeXe5440.
+    # some data are not yet available for PbPb5020, and
+    # notdata is available for XeXe5440.
     # create dummy entries so that they are computed for the model
     if system in ['PbPb5020', 'XeXe5440']:
         data = dict(
@@ -280,6 +280,9 @@ def _data(system, dataset='main'):
              expt.data['PbPb2760'].items() if obs not in data),
             **data
         )
+
+    if system == 'XeXe5440':
+        data['dNch_deta'] = expt.data['PbPb5020']['dNch_deta'] 
 
     data = ModelData(*files).observables_like(data)
 

@@ -357,7 +357,17 @@ def observables_map():
                 facecolor='.9', zorder=-10,
             )
 
-            # ratio_ax.plot(x, y/yexp, color=color, ls=linestyle)
+        for obs, subobs, opts in plot['subplots']:
+            x_pbpb, y_pbpb, x_xexe, y_xexe = [
+                    model.map_data[sys][obs][subobs][var]
+                    for (sys, var) in itertools.product(systems, ['x', 'Y'])
+                    ]
+
+            color = obs_color(obs, subobs)
+            try:
+                ratio_ax.plot(x_pbpb, y_xexe/y_pbpb, color=color)
+            except:
+                pass
 
         if plot.get('yscale') == 'log':
             ax.set_yscale('log')
@@ -396,11 +406,11 @@ def observables_map():
         )
 
         ratio_ax.axhline(1, lw=.5, color='0.5', zorder=-100)
-        ratio_ax.axhspan(.9, 1.1, color='0.93', zorder=-200)
-        ratio_ax.set_ylim(.85, 1.15)
+        ratio_ax.axhspan(.8, 1.2, color='0.93', zorder=-200)
+        ratio_ax.set_ylim(.5, 1.5)
         ratio_ax.set_ylabel('Ratio')
         ratio_ax.text(
-            ratio_ax.get_xlim()[1], .9, '±10%',
+            ratio_ax.get_xlim()[1], .8, '±20%',
             color='.6', zorder=-50,
             ha='right', va='bottom',
             size=plt.rcParams['xtick.labelsize']

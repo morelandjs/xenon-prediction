@@ -571,6 +571,9 @@ if __name__ == '__main__':
     # download model data
     for filename in filenames:
         cachefile = cachedir / filename
+        if cachefile.exists():
+            continue
+
         cachefile.parent.mkdir(exist_ok=True)
 
         logging.info('downloading model data: {}'.format(filename))

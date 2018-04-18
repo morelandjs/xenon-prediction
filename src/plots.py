@@ -20,7 +20,6 @@ decorator.
 import itertools
 import logging
 from pathlib import Path
-import subprocess
 import tempfile
 import warnings
 
@@ -545,7 +544,7 @@ def xenon_cross_section():
     # predict xenon
     xenon_sqrts = 5.44
     xenon_sigma_inel = cross_section_fit(np.log(xenon_sqrts))
-    plt.plot(np.log(xenon_sqrts), xenon_sigma_inel, 'o', zorder=1) 
+    plt.plot(np.log(xenon_sqrts), xenon_sigma_inel, 'o', zorder=1)
 
     plt.xlabel(r'$\log(\sqrt{s_\mathrm{NN}})$')
     plt.ylabel(r'$\sigma_\mathrm{NN}^\mathrm{inel}$')
@@ -562,6 +561,107 @@ def xenon_cross_section():
 
     plt.title(r'Xe+Xe, $\sqrt{s_\mathrm{NN}}=5.44$ TeV cross section')
     set_tight(fig)
+
+
+@plot
+def nch_per_npart():
+    """
+    Charged particle density at mid-rapidity per nucleon participant
+    pair (dNch/deta)/(Npart/2).
+
+    """
+    width = .7*textwidth
+    fig = plt.figure(figsize=(width, aspect*width))
+
+    """
+    ALICE (dNch/deta)/(Npart/2) for Pb-Pb at 5.02 TeV
+
+    Divides experimentally measured (dNch/deta) by ALICE Glauber model Npart.
+
+    Reference: www.hepdata.net/record/ins1410589
+
+    """
+    alice_pbpb = {
+        'cent_low': [0, 2.5, 5, 7.5, 10, 20, 30, 40, 50, 60, 70],
+        'cent_high': [2.5, 5, 7.5, 10, 20, 30, 40, 50, 60, 70, 80],
+        'npart': [398, 372.2, 345.6, 320.1, 263, 188, 131, 86.3, 53.6, 30.4, 15.6],
+        'npart_err': [2, 3, 4, 4, 4, 3, 2, 1.7, 1.2, .8, .5],
+        'nch_per_npart': [10.23, 9.94, 9.64, 9.4, 8.98, 8.37, 7.81, 7.37, 6.84, 6.33, 5.76],
+        'nch_per_npart_err': [.27, .31, .29, .29, .27, .26, .27, .32, .34, .41, .47]
+    }
+
+    cent_bins = list(zip(alice_pbpb['cent_low'], alice_pbpb['cent_high']))
+    cent = [(a + b)/2 for (a, b) in cent_bins]
+
+    plt.errorbar(
+        alice_pbpb['npart'], alice_pbpb['nch_per_npart'],
+        xerr=alice_pbpb['npart_err'], yerr=alice_pbpb['nch_per_npart_err'],
+        color=offblack, fmt='o', label='ALICE yield / ALICE Glb Npart'
+    )
+
+    """
+    Bayesian MAP (dNch/deta)/(Npart/2) for Pb-Pb, Xe-Xe at 5.02 and 5.44 TeV
+
+    Reference: https://github.com/morelandjs/xenon-prediction
+
+    """
+    systems = [
+        ('PbPb5020', r'Pb-Pb, 5.02 TeV'),
+        # ('XeXe5440', r'Xe-Xe, 5.44 TeV'),
+    ]
+
+    def split_cent_bins(array, bins):
+        """
+        Split an array into chunks for each centrality bin. The
+        array must already be sorted by centrality along its first axis.
+
+        """
+        for (a, b) in bins:
+            i, j = (int(array.shape[0]*c/100) for c in (a, b))
+            yield array[i:j]
+
+    for system, label in systems:
+        """
+        Divide (dNch/deta) from minimum bias hydro events by Npart from
+        minimum bias initial condition events.
+
+        """
+        mapfile = Path(workdir, 'model_output', 'map', '{}.dat'.format(system))
+        hydro_events = model.ModelData(mapfile).events.pop()
+
+        dnch_deta = np.array([
+            np.mean(nch) for nch in split_cent_bins(
+                hydro_events['dNch_deta'][::-1], cent_bins
+            )
+        ])
+
+        fname = 'model_output/map/{}.init'.format(system)
+        npart, mult = np.loadtxt(fname, usecols=[2, 3]).T
+
+        npart = np.array([
+            np.mean(npart) for npart in split_cent_bins(
+                npart[mult.argsort()][::-1], cent_bins
+            )
+        ])
+
+        plt.plot(
+            npart, (2*dnch_deta/npart),
+            label='TRENTO yield / TRENTO Npart',
+        )
+
+        if system == 'PbPb5020':
+            npart = alice_pbpb['npart']
+            plt.plot(
+                npart, (2*dnch_deta/npart),
+                label='TRENTO yield / ALICE Glb Npart'
+            )
+
+    plt.ylim(0, 12)
+    plt.xlabel(r'$N_\mathrm{part}$')
+    plt.ylabel(r'$(dN_\mathrm{ch}/d\eta)/(N_\mathrm{part}/2)$')
+    plt.legend(title='System: Pb-Pb at 5.02 TeV', loc=4)
+
+    set_tight()
 
 
 if __name__ == '__main__':

@@ -746,8 +746,17 @@ def nch_per_npart():
         savefile = Path('predict', '{}.txt'.format(system))
         savefile.parent.mkdir(parents=True, exist_ok=True)
 
-        results = np.column_stack((cent, npart, dnch_deta, 2*dnch_deta/npart))
-        header = 'Centrality, <Npart>, <dNch/deta>, <dNch/deta>/(<Npart>/2)'
+        renorm = 1.06
+        results = np.column_stack((
+            cent, npart, dnch_deta, 2*dnch_deta/npart,
+            renorm*dnch_deta, renorm*2*dnch_deta/npart
+        ))
+
+        header = ', '.join([
+            'Centrality', '<Npart>', '<dNch/deta>', '<dNch/deta>/(<Npart>/2)',
+            'renormed <dNch/deta>', 'renormed <dNch/deta>/(<Npart>/2)'
+        ])
+
         np.savetxt(savefile, results, fmt='%1.3f', delimiter=' ', header=header)
 
     plt.ylim(0, 12)

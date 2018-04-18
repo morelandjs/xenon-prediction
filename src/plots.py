@@ -675,7 +675,12 @@ if __name__ == '__main__':
 
     baseurl = 'https://www.phy.duke.edu/~jsm55/xenon-prediction'
     filenames = [
-        'PbPb2760.init', 'PbPb5020.init', 'PbPb5440.init', 'PbPb5020.dat', 'XeXe5440.dat'
+        'PbPb2760.init',
+        'PbPb5020.init',
+        'PbPb5440.init',
+        'XeXe5440.init',
+        'PbPb5020.dat',
+        'XeXe5440.dat'
     ]
 
     # download model data

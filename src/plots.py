@@ -771,6 +771,7 @@ if __name__ == '__main__':
     filenames = [
         'PbPb2760.init',
         'PbPb5020.init',
+        'PbPb5440.init',
         'PbPb5020.alice',
         'XeXe5440.alice',
         'PbPb5020.dat',

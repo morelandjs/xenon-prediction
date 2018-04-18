@@ -20,6 +20,7 @@ decorator.
 import itertools
 import logging
 from pathlib import Path
+import subprocess
 import tempfile
 import warnings
 
@@ -29,6 +30,7 @@ import matplotlib.pyplot as plt
 from matplotlib import lines
 from matplotlib import patches
 from matplotlib import ticker
+from scipy.optimize import minimize_scalar
 
 from . import workdir, systems, parse_system, expt, model
 
@@ -96,6 +98,33 @@ plotdir = workdir / 'plots'
 plotdir.mkdir(exist_ok=True)
 
 plot_functions = {}
+
+
+def run_cmd(*args):
+    """
+    Run and log a subprocess.
+    """
+    cmd = ' '.join(args)
+    logging.info('running command: %s', cmd)
+
+    try:
+        proc = subprocess.run(
+            cmd.split(), check=True,
+            stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+            universal_newlines=True
+        )
+    except subprocess.CalledProcessError as e:
+        logging.error(
+            'command failed with status %d:\n%s',
+            e.returncode, e.output.strip('\n')
+        )
+        raise
+    else:
+        logging.debug(
+            'command completed successfully:\n%s',
+            proc.stdout.strip('\n')
+        )
+        return proc
 
 
 def plot(f):
@@ -563,6 +592,59 @@ def xenon_cross_section():
     set_tight(fig)
 
 
+def split_cent_bins(array, bins):
+    """
+    Split an array into chunks for each centrality bin. The
+    array must already be sorted by centrality along its first axis.
+
+    """
+    for (a, b) in bins:
+        i, j = (int(array.shape[0]*c/100) for c in (a, b))
+        yield array[i:j]
+
+
+def fit_trento_fluct(k=1):
+    """
+    Determine the optimal trento fluctuation parameter k by calibrating
+    the model to fit ALICE (dNch/deta)/(Npart/2) data.
+
+    """
+    expt = {
+        'cent_low': [0, 2.5, 5, 7.5, 10, 20, 30, 40, 50, 60, 70],
+        'cent_high': [2.5, 5, 7.5, 10, 20, 30, 40, 50, 60, 70, 80],
+        'npart': [398, 372.2, 345.6, 320.1, 263, 188, 131, 86.3, 53.6, 30.4, 15.6],
+        'nch_per_npart': [10.23, 9.94, 9.64, 9.4, 8.98, 8.37, 7.81, 7.37, 6.84, 6.33, 5.76],
+    }
+
+    cent_bins = list(zip(expt['cent_low'], expt['cent_high']))
+    cent = [(a + b)/2 for (a, b) in cent_bins]
+
+    def trento(k):
+        """
+        Run trento Pb-Pb events at 5.02 TeV using high-likelihood values for all
+        model parameters except for the fluctuation parameter k, which is
+        specified as an argument.
+
+        Return the sum of squares of model residuals.
+
+        """
+        proc = run_cmd('trento Pb Pb 20000 -p 0 -k {} -w .88 -x 7 -d 1'.format(k))
+        mult = np.sort([float(l.split()[3]) for l in proc.stdout.splitlines()])
+
+        nch_per_npart = np.array([
+            np.mean(s)/(npart/2) for s, npart in zip(
+                split_cent_bins(mult[::-1], cent_bins),
+                expt['npart']
+            )
+        ])
+
+        norm = np.mean(expt['nch_per_npart']/nch_per_npart)
+        return sum(norm*nch_per_npart - expt['nch_per_npart'])**2
+
+    res = minimize_scalar(trento, method='bounded', bounds=(.5, 10))
+    return res.x
+
+
 @plot
 def nch_per_npart():
     """
@@ -596,7 +678,7 @@ def nch_per_npart():
     plt.errorbar(
         alice_pbpb['npart'], alice_pbpb['nch_per_npart'],
         xerr=alice_pbpb['npart_err'], yerr=alice_pbpb['nch_per_npart_err'],
-        color=offblack, fmt='o', label='ALICE yield / ALICE Glb Npart'
+        color=offblack, fmt='o', label='ALICE: Pb-Pb, 5.02 TeV'
     )
 
     """
@@ -606,8 +688,8 @@ def nch_per_npart():
 
     """
     systems = [
-        ('PbPb5020', r'Pb-Pb, 5.02 TeV'),
-        # ('XeXe5440', r'Xe-Xe, 5.44 TeV'),
+        ('PbPb5020', r'Duke global calibr: Pb-Pb, 5.02 TeV'),
+        ('XeXe5440', r'Duke global calibr: Xe-Xe, 5.44 TeV'),
     ]
 
     def split_cent_bins(array, bins):
@@ -622,8 +704,32 @@ def nch_per_npart():
 
     for system, label in systems:
         """
-        Divide (dNch/deta) from minimum bias hydro events by Npart from
-        minimum bias initial condition events.
+        Centrality bins
+
+        """
+        cent_edges = np.linspace(0, 80, 81)
+        cent_bins = [(a, b) for (a, b) in zip(cent_edges[:-1], cent_edges[1:])]
+        cent = [(a + b)/2 for (a, b) in cent_bins]
+
+        """
+        Mimic ALICE MC-Glauber model Npart using TRENTO
+
+        """
+        fname = 'model_output/map/{}.alice'.format(system)
+        npart, ncoll = np.loadtxt(fname, usecols=[2, 3]).T
+        mult = .8*npart + .2*ncoll
+
+        npart = np.array([
+            np.mean(npart) for npart in split_cent_bins(
+                npart[mult.argsort()][::-1], cent_bins
+            )
+        ])
+
+        """
+        Calculate (dNch/deta) / (Npart/2) from the Duke global Bayesian
+        calibration. These (dNch/deta) values are calculated from the full
+        collision model, trento -> freestreaming -> vishnew -> urqmd, and
+        are calibrated to multiple observables.
 
         """
         mapfile = Path(workdir, 'model_output', 'map', '{}.dat'.format(system))
@@ -635,31 +741,19 @@ def nch_per_npart():
             )
         ])
 
-        fname = 'model_output/map/{}.init'.format(system)
-        npart, mult = np.loadtxt(fname, usecols=[2, 3]).T
+        plt.plot(npart, (2*dnch_deta/npart), label=label)
 
-        npart = np.array([
-            np.mean(npart) for npart in split_cent_bins(
-                npart[mult.argsort()][::-1], cent_bins
-            )
-        ])
+        savefile = Path('predict', '{}.txt'.format(system))
+        savefile.parent.mkdir(parents=True, exist_ok=True)
 
-        plt.plot(
-            npart, (2*dnch_deta/npart),
-            label='TRENTO yield / TRENTO Npart',
-        )
-
-        if system == 'PbPb5020':
-            npart = alice_pbpb['npart']
-            plt.plot(
-                npart, (2*dnch_deta/npart),
-                label='TRENTO yield / ALICE Glb Npart'
-            )
+        results = np.column_stack((cent, npart, dnch_deta, 2*dnch_deta/npart))
+        header = 'Centrality, <Npart>, <dNch/deta>, <dNch/deta>/(<Npart>/2)'
+        np.savetxt(savefile, results, fmt='%1.3f', delimiter=' ', header=header)
 
     plt.ylim(0, 12)
     plt.xlabel(r'$N_\mathrm{part}$')
     plt.ylabel(r'$(dN_\mathrm{ch}/d\eta)/(N_\mathrm{part}/2)$')
-    plt.legend(title='System: Pb-Pb at 5.02 TeV', loc=4)
+    plt.legend(title='Collision systems', loc=4)
 
     set_tight()
 
@@ -675,7 +769,12 @@ if __name__ == '__main__':
 
     baseurl = 'https://www.phy.duke.edu/~jsm55/xenon-prediction'
     filenames = [
-        'PbPb2760.init', 'PbPb5020.init', 'PbPb5440.init', 'PbPb5020.dat', 'XeXe5440.dat'
+        'PbPb2760.init',
+        'PbPb5020.init',
+        'PbPb5020.alice',
+        'XeXe5440.alice',
+        'PbPb5020.dat',
+        'XeXe5440.dat',
     ]
 
     # download model data

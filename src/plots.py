@@ -142,7 +142,7 @@ def plot(f):
             set_tight(fig)
 
         plotfile = plotdir / '{}.png'.format(f.__name__)
-        fig.savefig(str(plotfile), dpi=200)
+        fig.savefig(str(plotfile), dpi=300)
         logging.info('wrote %s', plotfile)
         plt.close(fig)
 

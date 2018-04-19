@@ -13,7 +13,9 @@ pip install -r requirements.txt
 Then run `python3 -m src.plots` from the git repo directory to regenerate the
 prediction figures.
 
-## Figure captions
+## Figure descriptions
+
+The following documentation describes each of the figures in the `plots` directory.
 
 ### Xenon cross section
 ![alt text](https://github.com/morelandjs/xenon-prediction/blob/master/plots/xenon_cross_section.png)

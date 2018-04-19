@@ -18,7 +18,7 @@ prediction figures.
 The following documentation describes each of the figures in the `plots` directory.
 
 ### Xenon cross section
-![](https://github.com/morelandjs/xenon-prediction/blob/master/plots/xenon_cross_section.png =892x551)
+![alt text](https://github.com/morelandjs/xenon-prediction/blob/master/plots/xenon_cross_section.png =200x)
 
 The trento initial condition model takes as input the inelastic nucleon-nucleon cross section and an overall entropy normalization factor which should be tuned at each collision beam energy. To make predictions for Xe+Xe collisions at 5.44 TeV, we need to extrapolate their values from previous measurements. 
 

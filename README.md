@@ -13,9 +13,12 @@ pip install -r requirements.txt
 Then run `python3 -m src.plots` from the git repo directory to regenerate the
 prediction figures.
 
-## Figure captions
+## Figure descriptions
+
+The following documentation describes each of the figures in the `plots` directory.
 
 ### Xenon cross section
+![alt text](https://github.com/morelandjs/xenon-prediction/blob/master/plots/xenon_cross_section.png)
 
 The trento initial condition model takes as input the inelastic nucleon-nucleon cross section and an overall entropy normalization factor which should be tuned at each collision beam energy. To make predictions for Xe+Xe collisions at 5.44 TeV, we need to extrapolate their values from previous measurements. 
 
@@ -24,6 +27,7 @@ The inelastic nucleon-nucleon cross section is measured experimentally. We use m
 We find an inelastic nucleon-nucleon cross section at 5.44 TeV of 7.07 fm<sup>2</sup>.
 
 ### Entropy normalization
+![alt text](https://github.com/morelandjs/xenon-prediction/blob/master/plots/entropy_norm.png)
 
 In addition to the increasing cross section, we must extrapolate the increase in the normalization factor from 5.02 to 5.44 TeV. 
 
@@ -34,12 +38,32 @@ The two normalization factors, norm(2.76 TeV) and norm(5.02 TeV), are then fit w
 This yields a modest ~2% increase in the entropy normalization from 5.02 to 5.44 TeV.
 
 ### Observables from maximum posterior density
+![alt text](https://github.com/morelandjs/xenon-prediction/blob/master/plots/observables_map.png)
 
 We show self consistent calculations for Pb+Pb collisions at 5.02 TeV and Xe+Xe collisions at 5.44 TeV using model parameters which have been calibrated to fit available data for Pb+Pb collisions at 2.76 and 5.02 TeV. Note that most of the 5.02 Pb+Pb data is missing, and hence our model calculations represent predictions for those observables as well. For observables where the 5.02 and 5.44 TeV measurements are missing, we use the same centrality bins as 2.76 TeV measurements.
 
 The observables are calculated from ~1 million minimum bias Pb+Pb events and ~1.5 million minimum bias Xe+Xe events. The minimum bias events are sorted into centrality bins exactly as done by experiment.
 
 Solid lines show model calculations for 5.02 TeV Pb+Pb collisions and dashed lines model calculations for 5.44 TeV Xe+Xe collisions. The inset at the bottom of each panel is the ratio of 5.44 TeV Xe+Xe to 5.02 TeV Pb+Pb.
+
+### Calculation of (dNch/dη)(Npart/2)
+![alt text](https://github.com/morelandjs/xenon-prediction/blob/master/plots/nch_per_npart.png)
+
+We calculate the participant scaled yield (dNch/dη)/(Npart/2) for Pb-Pb collisions at 5.02 TeV using maximum a posteriori parameters (listed below) determined by calibrating the model to fit multiple Pb-Pb collision observables at 2.76 and 5.02 TeV.
+We also predict this quantity for Xe-Xe collisions at 5.44 TeV using the same parameters as Pb-Pb at 5.02 TeV, except for a slightly larger normalization to reflect the difference in beam energy.
+
+There is one important quirk in this calculation. 
+Strictly speaking, (dNch/dη)/(Npart/2) is *not* a measurable quantity since Npart must be estimated from a model.
+The ALICE experimental collaboration uses a specific Monte Carlo Glauber model to calculate their Npart values.
+Our calculations use the Trento initial condition model which predicts somewhat different values of Npart compared to the ALICE Glauber model (e.g. see [glauber-attributes](https://github.com/morelandjs/glauber-attributes)).
+The difference arises from how nucleons collide in the two models.
+In the ALICE Glauber model, nucleons collide if they pass within some maximum distance of each other.
+In Trento, nucleons collide with collision probability Pcoll(b) which takes the form of a Gaussian.
+It makes little sense to compare (dNch/dη)/(Npart/2) between model and experiment using two different model calculations for Npart, so we reproduce the ALICE Glauber model nucleon interactions for the purpose of calculating Npart in the denominator of our Trento model predictions.
+
+Lastly, it is worth noting that our Pb-Pb postdiction and Xe-Xe prediction are not just fitting (dNch/dη)/(Npart/2), these are the same parameters that fit the global observables discussed in the previous section. 
+If, on the other hand, we just want to predict (dNch/dη)/(Npart/2) for Xe-Xe collisions at 5.44 TeV, it would be reasonable to rescale our model calculation using Pb-Pb at 5.02 TeV as a baseline since the overall normalization factor in the model is free to vary anyhow.
+We do not plot such a rescaling in the figure, but the rescaled values for (dNch/dη)/(Npart/2) are included in the `predict` directory.
 
 ## Physics model
 

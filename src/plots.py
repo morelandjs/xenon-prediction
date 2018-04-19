@@ -30,7 +30,6 @@ import matplotlib.pyplot as plt
 from matplotlib import lines
 from matplotlib import patches
 from matplotlib import ticker
-from scipy.optimize import minimize_scalar
 
 from . import workdir, systems, parse_system, expt, model
 
@@ -142,8 +141,8 @@ def plot(f):
         if not fig.get_tight_layout():
             set_tight(fig)
 
-        plotfile = plotdir / '{}.pdf'.format(f.__name__)
-        fig.savefig(str(plotfile))
+        plotfile = plotdir / '{}.png'.format(f.__name__)
+        fig.savefig(str(plotfile), dpi=300)
         logging.info('wrote %s', plotfile)
         plt.close(fig)
 
@@ -525,7 +524,7 @@ def entropy_norm():
 
         plt.annotate(
             '{} TeV'.format(s_tev),
-            xy=(s_tev + .1, dNchdeta_fit(s_tev)),
+            xy=(s_tev + .3, dNchdeta_fit(s_tev)),
             xycoords='data', ha='left', va='top',
         )
 
@@ -539,7 +538,7 @@ def entropy_norm():
 
     for t in legend.get_texts():
         t.set_ha('right')
-        t.set_position((30, 0))
+        t.set_position((100, 0))
 
     set_tight(fig)
 
@@ -601,48 +600,6 @@ def split_cent_bins(array, bins):
     for (a, b) in bins:
         i, j = (int(array.shape[0]*c/100) for c in (a, b))
         yield array[i:j]
-
-
-def fit_trento_fluct(k=1):
-    """
-    Determine the optimal trento fluctuation parameter k by calibrating
-    the model to fit ALICE (dNch/deta)/(Npart/2) data.
-
-    """
-    expt = {
-        'cent_low': [0, 2.5, 5, 7.5, 10, 20, 30, 40, 50, 60, 70],
-        'cent_high': [2.5, 5, 7.5, 10, 20, 30, 40, 50, 60, 70, 80],
-        'npart': [398, 372.2, 345.6, 320.1, 263, 188, 131, 86.3, 53.6, 30.4, 15.6],
-        'nch_per_npart': [10.23, 9.94, 9.64, 9.4, 8.98, 8.37, 7.81, 7.37, 6.84, 6.33, 5.76],
-    }
-
-    cent_bins = list(zip(expt['cent_low'], expt['cent_high']))
-    cent = [(a + b)/2 for (a, b) in cent_bins]
-
-    def trento(k):
-        """
-        Run trento Pb-Pb events at 5.02 TeV using high-likelihood values for all
-        model parameters except for the fluctuation parameter k, which is
-        specified as an argument.
-
-        Return the sum of squares of model residuals.
-
-        """
-        proc = run_cmd('trento Pb Pb 20000 -p 0 -k {} -w .88 -x 7 -d 1'.format(k))
-        mult = np.sort([float(l.split()[3]) for l in proc.stdout.splitlines()])
-
-        nch_per_npart = np.array([
-            np.mean(s)/(npart/2) for s, npart in zip(
-                split_cent_bins(mult[::-1], cent_bins),
-                expt['npart']
-            )
-        ])
-
-        norm = np.mean(expt['nch_per_npart']/nch_per_npart)
-        return sum(norm*nch_per_npart - expt['nch_per_npart'])**2
-
-    res = minimize_scalar(trento, method='bounded', bounds=(.5, 10))
-    return res.x
 
 
 @plot

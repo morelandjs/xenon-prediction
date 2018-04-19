@@ -49,7 +49,7 @@ We also predict this quantity for Xe-Xe collisions at 5.44 TeV using the same pa
 There is one important quirk in this calculation. 
 Strictly speaking, (dNch/dη)/(Npart/2) is *not* a measurable quantity since Npart must be estimated from a model.
 The ALICE experimental collaboration uses a specific Monte Carlo Glauber model to calculate their Npart values.
-Our calculations use the Trento initial condition model which predicts somewhat different values of Npart compared to the ALICE Glauber model.
+Our calculations use the Trento initial condition model which predicts somewhat different values of Npart compared to the ALICE Glauber model (e.g. see [glauber-attributes](https://github.com/morelandjs/glauber-attributes)).
 The difference arises from how nucleons collide in the two models.
 In the ALICE Glauber model, nucleons collide if they pass within some maximum distance of each other.
 In Trento, nucleons collide with collision probability Pcoll(b) which takes the form of a Gaussian.

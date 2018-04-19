@@ -24,6 +24,7 @@ The inelastic nucleon-nucleon cross section is measured experimentally. We use m
 We find an inelastic nucleon-nucleon cross section at 5.44 TeV of 7.07 fm<sup>2</sup>.
 
 ### Entropy normalization
+![alt text](https://github.com/morelandjs/xenon-prediction/blob/master/plots/entropy_norm.png)
 
 In addition to the increasing cross section, we must extrapolate the increase in the normalization factor from 5.02 to 5.44 TeV. 
 
@@ -56,7 +57,7 @@ In Trento, nucleons collide with collision probability Pcoll(b) which takes the 
 It makes little sense to compare (dNch/dη)/(Npart/2) between model and experiment using two different model calculations for Npart, so we reproduce the ALICE Glauber model nucleon interactions for the purpose of calculating Npart in the denominator of our Trento model predictions.
 
 Lastly, it is worth noting that our Pb-Pb postdiction and Xe-Xe prediction are not just fitting (dNch/dη)/(Npart/2), these are the same parameters that fit the global observables discussed in the previous section. 
-If, on the other hand, we just want to predict (dNch/dη)/(Npart/2) for Xe-Xe collisions at 5.44 TeV, it would be reasonable to rescale our model calculation using Pb-Pb at 5.02 TeV as a baseline since the overall normalization factor in the model in free to vary anyhow.
+If, on the other hand, we just want to predict (dNch/dη)/(Npart/2) for Xe-Xe collisions at 5.44 TeV, it would be reasonable to rescale our model calculation using Pb-Pb at 5.02 TeV as a baseline since the overall normalization factor in the model is free to vary anyhow.
 We do not plot such a rescaling in the figure, but the rescaled values for (dNch/dη)/(Npart/2) are included in the `predict` directory.
 
 ## Physics model

@@ -538,7 +538,7 @@ def entropy_norm():
 
     for t in legend.get_texts():
         t.set_ha('right')
-        t.set_position((60, 0))
+        t.set_position((100, 0))
 
     set_tight(fig)
 

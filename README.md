@@ -44,7 +44,7 @@ We show self consistent calculations for Pb+Pb collisions at 5.02 TeV and Xe+Xe 
 
 The observables are calculated from ~1 million minimum bias Pb+Pb events and ~1.5 million minimum bias Xe+Xe events. The minimum bias events are sorted into centrality bins exactly as done by experiment.
 
-Solid lines show model calculations for 5.02 TeV Pb+Pb collisions and dashed lines model calculations for 5.44 TeV Xe+Xe collisions. The inset at the bottom of each panel is the ratio of 5.44 TeV Xe+Xe to 5.02 TeV Pb+Pb.
+Dotted lines show model calculations for 2.76 TeV Pb+Pb collisions, solid lines calculations for 5.02 TeV Pb+Pb collisions and dashed lines model calculations for 5.44 TeV Xe+Xe collisions. The inset at the bottom of each panel is the ratio of 2.76 TeV Pb+Pb (dotted) and 5.44 TeV Xe+Xe (dashed) model results to 5.02 TeV Pb+Pb results.
 
 ### Calculation of (dNch/dη)(Npart/2)
 ![alt text](https://github.com/morelandjs/xenon-prediction/blob/master/plots/nch_per_npart.png)

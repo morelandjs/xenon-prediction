@@ -285,11 +285,11 @@ def observables_map():
 
     """
     plots = _observables_plots()
-    systems = 'PbPb5020', 'XeXe5440'
+    systems = ['PbPb2760', 'PbPb5020', 'XeXe5440']
 
     ylim = {
         'Yields': (2, 1e5),
-        'Flow cumulants': (0, .15),
+        'Flow cumulants': (0, .17),
         'Mean $p_T$': (0, 1.7),
         'Mean $p_T$ fluctuations': (0, .045),
     }
@@ -332,8 +332,9 @@ def observables_map():
             scale = opts.get('scale')
 
             linestyle, fill_markers = {
+                'PbPb2760': ('dotted', False),
                 'PbPb5020': ('solid', True),
-                'XeXe5440': ('dashed', False),
+                'XeXe5440': ('dashed', None),
             }[system]
 
             x = model.map_data[system][obs][subobs]['x']
@@ -347,9 +348,10 @@ def observables_map():
                 lines.Line2D([], [], color=offblack, ls=linestyle)
 
             if 'label' in opts and (obs, subobs) not in labels:
+                scale_lbl = r'$(\times{})$'.format(scale) if scale else ''
                 labels[obs, subobs] = ax.text(
                     x[-1] + 3, y[-1],
-                    opts['label'],
+                    ' '.join([opts['label'], scale_lbl]),
                     color=darken(color), ha='left', va='center'
                 )
 
@@ -385,16 +387,22 @@ def observables_map():
             )
 
         for obs, subobs, opts in plot['subplots']:
-            x_pbpb, y_pbpb, x_xexe, y_xexe = [
-                    model.map_data[sys][obs][subobs][var]
-                    for (sys, var) in itertools.product(systems, ['x', 'Y'])
-                    ]
+            x_denom, y_denom = [
+                model.map_data['PbPb5020'][obs][subobs][var] for var in ('x', 'Y')
+            ]
 
             color = obs_color(obs, subobs)
-            try:
-                ratio_ax.plot(x_pbpb, y_xexe/y_pbpb, color=color)
-            except:
-                pass
+
+            for sys, style in [('PbPb2760', 'dotted'), ('XeXe5440', 'dashed')]:
+                x_num, y_num = [
+                        model.map_data[sys][obs][subobs][var]
+                        for var in ['x', 'Y']
+                        ]
+
+                try:
+                    ratio_ax.plot(x_denom, y_num/y_denom, ls=style, color=color)
+                except:
+                    pass
 
         if plot.get('yscale') == 'log':
             ax.set_yscale('log')
@@ -415,13 +423,13 @@ def observables_map():
         empty = patches.Rectangle(
             (0,0), 1, 1, fill=False, edgecolor='none', visible=False
         )
-        expt_handles = [handles['expt']['PbPb5020'], empty]
+        expt_handles = [handles['expt'][s] for s in systems[:-1]] + [empty]
         model_handles = [handles['model'][s] for s in systems]
 
         if plot.get('legend'):
             ax.legend(
                 model_handles + expt_handles,
-                ['', '', 'Pb+Pb, 5.02 TeV', 'Xe+Xe, 5.44 TeV'],
+                ['', '', '', 'Pb+Pb, 2.76 TeV', 'Pb+Pb, 5.02 TeV', 'Xe+Xe, 5.44 TeV'],
                 ncol=2, loc='upper left', bbox_to_anchor=(0, .94),
                 columnspacing=0, handletextpad=0
             )
@@ -443,7 +451,7 @@ def observables_map():
             size=plt.rcParams['xtick.labelsize']
         )
 
-    set_tight(fig)
+    set_tight(fig, w_pad=1)
 
 
 def cross_section_fit(x):
@@ -740,6 +748,7 @@ if __name__ == '__main__':
         'PbPb5440.init',
         'PbPb5020.alice',
         'XeXe5440.alice',
+        'PbPb2760.dat',
         'PbPb5020.dat',
         'XeXe5440.dat',
     ]

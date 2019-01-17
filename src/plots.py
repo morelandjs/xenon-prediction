@@ -563,11 +563,12 @@ def entropy_norm():
     plt.xlabel(r'$\sqrt{s_\mathrm{NN}}$ [TeV]')
     plt.ylabel(r'$(dN_\mathrm{ch}/d\eta)(0–10\%)$')
 
-    legend = plt.legend(handles, labels, title='Pb+Pb norm')
+    plt.legend(handles, labels, title='Pb+Pb norm', handletextpad=0)
 
-    for t in legend.get_texts():
-        t.set_ha('right')
-        t.set_position((38, 0))
+
+    #for t in legend.get_texts():
+    #    t.set_ha('right')
+    #    t.set_position((38, 0))
 
     set_tight(fig)
 

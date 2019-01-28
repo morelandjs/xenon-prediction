@@ -522,7 +522,7 @@ def entropy_norm():
     2.76, 5.02 TeV.
 
     """
-    fig = plt.figure(figsize=figsize(.8))
+    fig = plt.figure(figsize=figsize(.7))
 
     dNchdeta_central = [
         (2.76, 1447.5),
@@ -531,15 +531,15 @@ def entropy_norm():
 
     # plot dNch/deta 0-10% fit function
     x = np.linspace(2, 7, 100)
-    plt.plot(x, dNchdeta_fit(x))
+    plt.plot(x, dNchdeta_fit(x), color='black')
 
     # plot dNch/deta measurements
-    for measurement in dNchdeta_central:
-        plt.plot(*measurement, 'o', label=' ')
+    for measurement, symbol in zip(dNchdeta_central, ['s', 'D']):
+        plt.plot(*measurement, symbol, color='black', label=' ')
 
     # plot dNch/deta Xe+Xe 5.44 TeV prediction
-    plt.plot(5.44, dNchdeta_fit(5.44), 'o',
-             mfc='white', mew=.5, label=' ')
+    plt.plot(5.44, dNchdeta_fit(5.44), 'o', markersize=3.5,
+             color=colors['red'], label=' ')
 
     # plot trento predictions
     handles, labels = plt.gca().get_legend_handles_labels()
@@ -553,8 +553,8 @@ def entropy_norm():
         norm = dNchdeta_fit(s_tev)/mult
 
         plt.annotate(
-            '{} TeV'.format(s_tev),
-            xy=(s_tev + .3, dNchdeta_fit(s_tev)),
+            '{} TeV'.format(s_tev), fontsize=fontsize['small'],
+            xy=(1.01*s_tev, (.99 if s_gev== 5440 else .98)*dNchdeta_fit(s_tev)),
             xycoords='data', ha='left', va='top',
         )
 
@@ -563,12 +563,9 @@ def entropy_norm():
     plt.xlabel(r'$\sqrt{s_\mathrm{NN}}$ [TeV]')
     plt.ylabel(r'$(dN_\mathrm{ch}/d\eta)(0–10\%)$')
 
-    plt.legend(handles, labels, title='Pb+Pb norm', handletextpad=0)
-
-
-    #for t in legend.get_texts():
-    #    t.set_ha('right')
-    #    t.set_position((38, 0))
+    plt.legend(handles, labels, title='Pb-Pb norm', borderpad=0,
+               handletextpad=0, loc='upper left', bbox_to_anchor=(0, 1),
+               fontsize=fontsize['small'])
 
     set_tight(fig)
 
@@ -582,27 +579,30 @@ def xenon_cross_section():
 
     """
     # figure size
-    fig = plt.figure(figsize=figsize(.8))
+    fig = plt.figure(figsize=figsize(.7))
+    ax = plt.gca()
 
     # experimental cross sections
     cross_sections = [
-        (0.20, 4.23),
-        (2.76, 6.40),
-        (5.02, 7.00),
-        (7.00, 7.32),
+        (0.20, 4.23, 's', 3),
+        (2.76, 6.40, 'D', 3),
+        (5.02, 7.00, 'h', 3.5),
+        (7.00, 7.32, 'p', 3.5),
     ]
 
-    sqrts, sigma_inel = zip(*cross_sections)
-    plt.plot(np.log(sqrts), sigma_inel, 'o', mew=.5, zorder=1)
+    for sqrts, sigma_inel, symbol, size in cross_sections:
+        plt.plot(np.log(sqrts), sigma_inel, symbol, color='black',
+                 markersize=size, label='{} TeV'.format(sqrts))
 
     # plot fit
     x = np.linspace(-2, 3, 100)
-    plt.plot(x, cross_section_fit(x), zorder=0)
+    plt.plot(x, cross_section_fit(x), zorder=0, color='black')
 
     # predict xenon
     xenon_sqrts = 5.44
     xenon_sigma_inel = cross_section_fit(np.log(xenon_sqrts))
-    plt.plot(np.log(xenon_sqrts), xenon_sigma_inel, 'o', zorder=1)
+    plt.plot(np.log(xenon_sqrts), xenon_sigma_inel, 'o', color=colors['red'],
+             markersize=3.5, zorder=1, label='5.44 TeV')
 
     plt.xlabel(r'$\log(\sqrt{s_\mathrm{NN}})$')
     plt.ylabel(r'$\sigma_\mathrm{NN}^\mathrm{inel}$')
@@ -613,11 +613,16 @@ def xenon_cross_section():
     ])
 
     plt.annotate(
-        label, xy=(np.log(xenon_sqrts), xenon_sigma_inel),
-        xycoords='data', ha='left', va='top'
+        label, xy=(1.01*np.log(xenon_sqrts), .99*xenon_sigma_inel),
+        xycoords='data', ha='left', va='top', fontsize=fontsize['small']
     )
 
-    plt.title(r'Xe+Xe, $\sqrt{s_\mathrm{NN}}=5.44$ TeV cross section')
+    handles, labels = ax.get_legend_handles_labels()
+    handles[-1], handles[-2] = handles[-2], handles[-1]
+    labels[-1], labels[-2] = labels[-2], labels[-1]
+
+    plt.legend(handles, labels, loc='upper left', fontsize=fontsize['small'],
+               title=r'$\sqrt{s_{NN}}$', handletextpad=0)
     set_tight(fig)
 
 
